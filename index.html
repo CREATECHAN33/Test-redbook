@@ -3480,10 +3480,12 @@ function renderResult(){
   var pLabel = prefLabel ? prefLabel.split("（")[0] : "";
   var pb0 = buildPlaybook(top.key);
   var prefLead = (userInfo.pref && userInfo.pref !== "none")
-    ? "你选的方向是 <b class=hl>"+pLabel+"</b>，结论已优先在这一方向里帮你找打法——"
-    : "你没给自己预设方向，下面这份结论，完全由你的特质排出来——";
+    ? (top.key === prefTo
+        ? "你选的方向是 <b class=hl>"+pLabel+"</b>——好，这个方向定了。"
+        : "你选了 <b class=hl>"+pLabel+"</b>，但你的特质把结论推向了 <b class=hl>"+topD.name+"</b>。")
+    : "你没给自己预设方向，下面这份结论，完全由你的特质排出来。";
   document.getElementById("resultLead").innerHTML =
-    prefLead+"你不是缺方向，是缺一个 <b class=hl>能赢的具体打法</b>。测出来的结论：做 <b class=hl>"+topD.name+"</b> 里的 "+pb0.engine.name+"。"+type.desc;
+    prefLead+"你不是缺方向，是缺一个 <b class=hl>能赢的具体打法</b>。排出来最值得先打的是：做 <b class=hl>"+topD.name+"</b> 里的 "+pb0.engine.name+"。"+type.desc;
 
   /* 雷达图：显式 0-100 刻度，保证数值大者在外；主库加载失败时静态兜底 + 备用源就绪后重画 */
   function renderRadar(){
@@ -3614,11 +3616,11 @@ function renderResult(){
     if(top.key === prefTo){
       if(rawTop.key === top.key){
         /* 情形1：偏好 = 特质 = 主结论，同一条路，无需备选 */
-        noteHtml = '<div class="pref-note"><b>已按你的偏好加权：</b>你选 <b class=hl>'+pLabel+'</b>，结论优先在这里找打法——而且你的特质也印证了这个方向，这是你自己选 + 天赋认证的双保险。</div>';
+        noteHtml = '<div class="pref-note"><b>已按你的偏好加权：</b>主结论顺着你选的 <b class=hl>'+pLabel+'</b> 排——你的特质也印证了这个方向，这是你自己选 + 天赋认证的双保险。</div>';
       } else {
         /* 情形2：主结论 = 偏好，特质最强是另一条 */
         altKey = rawTop.key;
-        noteHtml = '<div class="pref-note"><b>已按你的偏好加权：</b>你选 <b class=hl>'+pLabel+'</b>，结论优先在这里找打法。你的特质真正最配的是 <b class=hl>'+rawTop.name+'</b>（'+rawTop.score+' 分）——想看看另一条路？下方 <b class=hl>'+rawTop.name+'</b> 的备选打法已经为你备好。</div>';
+        noteHtml = '<div class="pref-note"><b>已按你的偏好加权：</b>主结论顺着你选的 <b class=hl>'+pLabel+'</b> 排。抛开这个选择，你的特质其实在 <b class=hl>'+rawTop.name+'</b> 上更亮眼（'+rawTop.score+' 分）——想看看另一条路？下方 <b class=hl>'+rawTop.name+'</b> 的备选打法已经为你备好。</div>';
       }
     } else {
       /* 情形3：主结论 = 特质，偏好排第二 */
